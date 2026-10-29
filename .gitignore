@@ -4,3 +4,4 @@ __pycache__/
 .venv/
 # Track B models go into GitHub releases, not into the history
 submission/*.onnx
+.DS_Store
