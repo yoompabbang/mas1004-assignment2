@@ -1,1 +1,1 @@
-python src/curate.py suspects results/baseline_seed0/model.onnx --every 4 --n 144
+python src/curate.py suspects results/baseline_seed0/model.onnx --n 240
