@@ -1,1 +1,3 @@
-python src/curate.py suspects results/baseline_seed0/model.onnx --every 4
+python src/official.py --tag drop_empty_cars
+python src/train_b.py --tag b_starter --submit
+python src/check_submission.py --no-val
