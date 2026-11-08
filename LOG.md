@@ -81,5 +81,9 @@ End the log with your plan for what to try next.
 - reason: 과제의 목표와 맞지 않는 사진이다. 상관없는 규칙을 배울 수 있기에 제거한다.
 - how I will look: all training photos whose probability for their own city is below 0.3 in suspects_baseline_seed0.csv (from the run on every photo), for all five cities.
 
+## 2026-11-09 b_mnv3_320_bal (Track B)
+- changed: `--balance` (every city drawn equally often) on top of b_mnv3_320; everything else as in b_mnv3_320 (mobilenet_v3_large IMAGENET1K_V2 at 320, 4 epochs, all 44257 starter photos, learning rate 3e-4, batch size 64), on Colab, with `--keep`
+- why: 부산의 사진이 도쿄 사진의 절반도 안 된다. 거의 모든 실험에서 하위권에 위치한 부산에 비해 도쿄는 거의 모든 실험에서 상위권에 위치했으므로 사진의 양이 학습의 질을 좌우하나 궁금해졌다. 
+
 ## Next plan
 Track B에선 사진을 직접 추가해볼 예정이다. 실내 사진은 제외하고 철저히 실외 사진으로 배경 중심에 사진을 선별해 넣으면 학습이 수월하지 않을까 생각한다. 물론 도시당 사진 몇십장만으로는 효과가 미미할 거라고 생각해 추가할 사진의 양도 늘리고, 도시일 확률 0.3 이하인 사진을 suspects 시트로 만들어 전부 검토한 다음, 도시를 특정하기 어려운 대상 중심의 음식 사진, 셀카 등을 스타터 사진에서 제외해볼 예정이다. 

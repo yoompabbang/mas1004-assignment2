@@ -1,2 +1,1 @@
-python src/train_b.py --tag b_mnv3_320 --model mobilenet_v3_large --size 320 --keep
-python src/train_b.py --tag b_mnv3_512 --model mobilenet_v3_large --size 512 --keep
+python src/train_b.py --tag b_mnv3_320_bal --model mobilenet_v3_large --size 320 --balance --keep
