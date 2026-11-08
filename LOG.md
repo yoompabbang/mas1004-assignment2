@@ -65,8 +65,21 @@ End the log with your plan for what to try next.
 - what it means: Track B의 전체 기준값은 0.4943이 나왔고 가장 헷갈려하는 도시는 순서대로 오사카와 부산으로 Track A와 비슷한 결과가 나왔다. 아직 현재까지는 Track A와 같은 모델을 쓰고 있고 스타터 사진또한 일치해서 그런가보다. 
 
 ## 2026-11-08 b_mnv3_320 and b_mnv3_512 (Track B)
-- changed: mobilenet_v3_large (torchvision IMAGENET1K_V2) instead of resnet18, at 320 (b_mnv3_320) and at 512 (b_mnv3_512); everything else as in b_starter (4 epochs, all starter photos, learning rate 3e-4, batch size 64); 4.20 million parameters, 0.44 billion multiply-adds at 320 and 1.11 billion at 512
+- changed: mobilenet_v3_large instead of resnet18, at 320 (b_mnv3_320) and at 512 (b_mnv3_512); everything else as in b_starter (4 epochs, all 44257 starter photos, learning rate 3e-4, batch size 64), on Colab, with `--keep` so that both models came back
+  - starting weights differ: b_starter used torchvision resnet18 IMAGENET1K_V1, both MobileNetV3 runs used torchvision mobilenet_v3_large IMAGENET1K_V2
+  - 4.20 million parameters; 0.44 billion multiply-adds at 320 and 1.11 billion at 512; check_submission: format and limits: OK for both
+  - training time: b_mnv3_320 2444.7 s (40.7 min), b_mnv3_512 4531.1 s (75.5 min); b_starter took 1899.7 s (31.7 min)
 - why: 기존 사용하던 모델보다 성능(ImageNet 정확도)이 더 높은 모델이고 크기도 더 작아 연산량도 적다. 사진의 크기가 커져서 계산이 늘어나도 모델이 덜 복잡하기에 연산량의 제한에 걸리지 않는다. 사진을 더 큰 픽셀로 선명하게 볼 수 있다면 이전에 뭉개지던 사진 속 글씨들도 단서로 활용할 수 있을 것이리라 기대한다. 지금 실험에선 모델과 픽셀 크기를 동시에 바꾸어 점수 차이가 무엇 때문에 일어난 건지 파악이 어렵기에 바꾼 모델로 픽셀 크기가 320일 때와, 512일 때를 비교해보기로 했다.
+- validation: b_mnv3_320 0.5494, b_mnv3_512 0.5644 (before: b_starter 0.4943)
+  - b_mnv3_320: seoul 0.6144, busan 0.4540, tokyo 0.6774, osaka 0.4008, taipei 0.6005
+  - b_mnv3_512: seoul 0.6563, busan 0.4022, tokyo 0.6418, osaka 0.4478, taipei 0.6741
+  - b_starter:  seoul 0.5655, busan 0.4000, tokyo 0.6251, osaka 0.3661, taipei 0.5149
+- what it means: 우선 모델을 바꾸자 전체 점수가 b_starter에 비해 약 5.5~7점 상승했다. Track A에서 확인한 운의 크기(전체 약 0.4점)에 비하면 10배 이상 큰 변화이다. 확실히 효과가 있었다. 물론 같은 모델에서 픽셀 크기가 224일 때와 512일 때를 비교한 건 아니라, 오직 모델만이 점수 향상에 영향을 미쳤다고 말할 순 없다. 픽셀 크기가 320일 때와 512일 때를 비교하면, 픽셀 크기가 512일 때가 전체 점수가 약 1.5점이나 더 높지만 도시별로 비교에 들어가면 픽셀 크기가 320일 때는 모든 도시가 고르게 점수가 오른 반면, 픽셀 크기가 512일 때는 특정 도시(서울, 오사카, 타이베이)의 점수 변화가 큰 것을 확인할 수 있었다. 특히 눈에 띄는 건 픽셀 크기를 키웠을 때 같은 나라의 다른 도시(서울-부산/도쿄-오사카)의 점수 변화 방향이 반대였다는 점이다. 부산에서 헷갈리는 사진을 서울로 몰아주게 된 것이 아닐까. 픽셀 크기가 512일 때는 계산 또한 오래 걸리고, 각 도시 별로 점수의 편차가 고르지 않으므로 픽셀 크기가 320일 때를 선택해야겠다.  
+
+## 2026-11-08 rule for dropping training photos: not outdoor street photos (Track A, on top of drop_car_closeups)
+- rule: 도시의 실외 길거리 사진이 아닌 것(실내, 셀카, 음식)은 제외한다.
+- reason: 과제의 목표와 맞지 않는 사진이다. 상관없는 규칙을 배울 수 있기에 제거한다.
+- how I will look: all training photos whose probability for their own city is below 0.3 in suspects_baseline_seed0.csv (from the run on every photo), for all five cities.
 
 ## Next plan
 Track B에선 사진을 직접 추가해볼 예정이다. 실내 사진은 제외하고 철저히 실외 사진으로 배경 중심에 사진을 선별해 넣으면 학습이 수월하지 않을까 생각한다. 물론 도시당 사진 몇십장만으로는 효과가 미미할 거라고 생각해 추가할 사진의 양도 늘리고, 도시일 확률 0.3 이하인 사진을 suspects 시트로 만들어 전부 검토한 다음, 도시를 특정하기 어려운 대상 중심의 음식 사진, 셀카 등을 스타터 사진에서 제외해볼 예정이다. 
