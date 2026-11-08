@@ -5,3 +5,5 @@ __pycache__/
 # Track B models go into GitHub releases, not into the history
 submission/*.onnx
 .DS_Store
+# Models kept with --keep come back from Colab in submission/<tag>/
+submission/*/

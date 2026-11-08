@@ -9,6 +9,7 @@ million parameters and 2.0 billion multiply-adds per photo.
     python src/train_b.py --tag b2 --folders data/starter/train data/mine
     python src/train_b.py --tag b3 --model mobilenet_v3_large --size 320 --epochs 8 --balance
     python src/train_b.py --tag b3 --submit                         also write submission/
+    python src/train_b.py --tag b3 --keep                           also write submission/b3/
 
 Every folder holds <city>/ subfolders of photos. Photos in data/starter/val are
 used to measure, so do not train on them if you want that number to mean
@@ -114,6 +115,8 @@ def main():
     ap.add_argument("--balance", action="store_true", help="draw every city equally often")
     ap.add_argument("--workers", type=int, default=min(8, os.cpu_count() or 2))
     ap.add_argument("--submit", action="store_true", help="also copy the model into submission/")
+    ap.add_argument("--keep", action="store_true",
+                    help="also copy the model into submission/<tag>/, so that it comes back from Colab")
     ap.add_argument("--val-every", type=int, default=1,
                     help="measure on every n-th validation photo only (quicker without a GPU)")
     args = ap.parse_args()
@@ -179,6 +182,13 @@ def main():
         for name in ("model.onnx", "submission.json"):
             shutil.copy(out / name, ROOT / "submission" / name)
         print("copied to submission/. Check it with: python src/check_submission.py")
+    if args.keep:
+        kept = ROOT / "submission" / args.tag
+        kept.mkdir(parents=True, exist_ok=True)
+        for name in ("model.onnx", "submission.json"):
+            shutil.copy(out / name, kept / name)
+        print(f"copied to submission/{args.tag}/. Check it with: "
+              f"python src/check_submission.py --submission submission/{args.tag}")
 
     log = Path(os.environ.get("MAS1004_EXPERIMENTS", ROOT / "experiments.csv"))
     fields = ["finished", "track", "tag", "seed", "official_budget", "budget", "val_score", *CITIES,

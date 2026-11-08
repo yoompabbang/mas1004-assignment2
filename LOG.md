@@ -64,5 +64,9 @@ End the log with your plan for what to try next.
   - seoul 0.5655, busan 0.4000, tokyo 0.6251, osaka 0.3661, taipei 0.5149
 - what it means: Track B의 전체 기준값은 0.4943이 나왔고 가장 헷갈려하는 도시는 순서대로 오사카와 부산으로 Track A와 비슷한 결과가 나왔다. 아직 현재까지는 Track A와 같은 모델을 쓰고 있고 스타터 사진또한 일치해서 그런가보다. 
 
+## 2026-11-08 b_mnv3_320 and b_mnv3_512 (Track B)
+- changed: mobilenet_v3_large (torchvision IMAGENET1K_V2) instead of resnet18, at 320 (b_mnv3_320) and at 512 (b_mnv3_512); everything else as in b_starter (4 epochs, all starter photos, learning rate 3e-4, batch size 64); 4.20 million parameters, 0.44 billion multiply-adds at 320 and 1.11 billion at 512
+- why: 기존 사용하던 모델보다 성능(ImageNet 정확도)이 더 높은 모델이고 크기도 더 작아 연산량도 적다. 사진의 크기가 커져서 계산이 늘어나도 모델이 덜 복잡하기에 연산량의 제한에 걸리지 않는다. 사진을 더 큰 픽셀로 선명하게 볼 수 있다면 이전에 뭉개지던 사진 속 글씨들도 단서로 활용할 수 있을 것이리라 기대한다. 지금 실험에선 모델과 픽셀 크기를 동시에 바꾸어 점수 차이가 무엇 때문에 일어난 건지 파악이 어렵기에 바꾼 모델로 픽셀 크기가 320일 때와, 512일 때를 비교해보기로 했다.
+
 ## Next plan
 Track B에선 사진을 직접 추가해볼 예정이다. 실내 사진은 제외하고 철저히 실외 사진으로 배경 중심에 사진을 선별해 넣으면 학습이 수월하지 않을까 생각한다. 물론 도시당 사진 몇십장만으로는 효과가 미미할 거라고 생각해 추가할 사진의 양도 늘리고, 도시일 확률 0.3 이하인 사진을 suspects 시트로 만들어 전부 검토한 다음, 도시를 특정하기 어려운 대상 중심의 음식 사진, 셀카 등을 스타터 사진에서 제외해볼 예정이다. 
