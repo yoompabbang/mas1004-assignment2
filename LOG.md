@@ -84,6 +84,28 @@ End the log with your plan for what to try next.
 ## 2026-11-09 b_mnv3_320_bal (Track B)
 - changed: `--balance` (every city drawn equally often) on top of b_mnv3_320; everything else as in b_mnv3_320 (mobilenet_v3_large IMAGENET1K_V2 at 320, 4 epochs, all 44257 starter photos, learning rate 3e-4, batch size 64), on Colab, with `--keep`
 - why: 부산의 사진이 도쿄 사진의 절반도 안 된다. 거의 모든 실험에서 하위권에 위치한 부산에 비해 도쿄는 거의 모든 실험에서 상위권에 위치했으므로 사진의 양이 학습의 질을 좌우하나 궁금해졌다. 
+- validation: 0.5527 (before: b_mnv3_320 0.5494)
+  - b_mnv3_320_bal: seoul 0.5741, busan 0.4986, tokyo 0.5609, osaka 0.5028, taipei 0.6273
+  - b_mnv3_320:     seoul 0.6144, busan 0.4540, tokyo 0.6774, osaka 0.4008, taipei 0.6005
+  - training time 2452.6 s (40.9 min), b_mnv3_320 2444.7 s (40.7 min); check_submission: format and limits: OK
+- what it means: 전체 점수의 변화는 +0.33 정도로 이는 운의 크기와 비슷한 값이다. 따라서 효과가 좋았다고 보긴 어렵다. 다만 도시별로는 꽤 큰 변동이 일어났는데 같은 나라에 두 도시의 점수가 서로 반대로 움직여 전체 점수의 변동을 상쇄하고 있었다. 오사카는 10.2점이 상승하고 도쿄는 11.6점이 하락하고, 부산은 4.5점이 상승하고 서울 4점이 하락하는 식으로 말이다. 점수가 제일 높은 도시와 낮은 도시의 차이가 27.6점에서 12.8점으로 줄은 걸 보면 점수들이 이전보다 고르게 분포됐음을 확인할 수 있다. 나는 사진을 보여주는 빈도가 모델이 헷갈릴 때 어느 도시로 예측하는지에 영향을 미친다는 것이 도시 각각으로 증명됐다고 판단했다.
+
+## 2026-11-09 drop_not_street (Track A)
+- changed: on top of drop_car_closeups, 1672 more training photos dropped by the rule "도시의 실외 길거리 사진이 아닌 것(실내, 셀카, 음식)"; same starter recipe, seed 0, on Colab
+  - sheets looked at: every selected photo whose probability for its own city was below 0.3 in suspects_baseline_seed0.csv (`scripts/draw_below.py --below 0.3`, 89 sheets: seoul 19, busan 12, tokyo 21, osaka 23, taipei 14)
+  - dropped: seoul 359, busan 251, tokyo 446, osaka 323, taipei 293
+  - final selection: 42411 photos (seoul 10914, busan 4789, tokyo 12894, osaka 6870, taipei 6944)
+- why: 과제의 목표와 맞지 않는 사진이다. 상관없는 규칙을 배울 수 있기에 제거한다.
+- validation: 0.4999 (before: drop_car_closeups 0.4983; baseline seed 0 0.4954, seed 1 0.4917)
+  - drop_not_street:   seoul 0.5823, busan 0.4079, tokyo 0.6125, osaka 0.3529, taipei 0.5439
+  - drop_car_closeups: seoul 0.5667, busan 0.3820, tokyo 0.6503, osaka 0.3670, taipei 0.5252
+  - baseline seed 0:   seoul 0.5647, busan 0.3813, tokyo 0.6344, osaka 0.3398, taipei 0.5568
+  - baseline seed 1:   seoul 0.5552, busan 0.3863, tokyo 0.6125, osaka 0.3811, taipei 0.5234
+  - training time 2311.5 s (38.5 min)
+
+## 2026-11-09 b_mnv3_320_bal_e8 (Track B)
+- changed: `--epochs 8` instead of 4 on top of b_mnv3_320_bal; everything else as in b_mnv3_320_bal (mobilenet_v3_large IMAGENET1K_V2 at 320, `--balance`, all 44257 starter photos, learning rate 3e-4, batch size 64), on Colab, with `--keep`
+- why: —balance로 도시별 점수를 고르게 만들었으니 이 상태에서 더 오래 학습해 같은 나라의 도시를 구별하는 능력을 향상해 전체 점수를 높이고 싶다. 마침 Track B는 학습량 제한이 없기도 하니 학습량을 2배 늘려보려고 한다.
 
 ## Next plan
 Track B에선 사진을 직접 추가해볼 예정이다. 실내 사진은 제외하고 철저히 실외 사진으로 배경 중심에 사진을 선별해 넣으면 학습이 수월하지 않을까 생각한다. 물론 도시당 사진 몇십장만으로는 효과가 미미할 거라고 생각해 추가할 사진의 양도 늘리고, 도시일 확률 0.3 이하인 사진을 suspects 시트로 만들어 전부 검토한 다음, 도시를 특정하기 어려운 대상 중심의 음식 사진, 셀카 등을 스타터 사진에서 제외해볼 예정이다. 
