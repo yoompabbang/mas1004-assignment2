@@ -111,6 +111,10 @@ End the log with your plan for what to try next.
 ## 2026-11-10 balanced (Track A)
 - changed: on top of drop_not_street (same 42411 photos), `sample_weights` in recipe.py gives each photo 1 / the number of photos of its city, so every city is drawn equally often; nothing else changed; seed 0, on Colab
 - why: Track B에서 도시 비율을 맞춰 같은 빈도로 사진을 보여줬을 때, 점수를 고르게 만드는 효과를 볼 수 있었다. 애매하면 사진이 많은 도시로 찍는 빈도가 줄어든 것이다. 따라서 해당 효과를 Track A에서도 적용해보려 한다.
+- validation: 0.5063 (before: drop_not_street 0.4999)
+  - balanced:        seoul 0.5162, busan 0.4396, tokyo 0.5313, osaka 0.4295, taipei 0.6148
+  - drop_not_street: seoul 0.5823, busan 0.4079, tokyo 0.6125, osaka 0.3529, taipei 0.5439
+  - training time 2166.9 s (36.1 min), drop_not_street 2311.5 s (38.5 min); brought in from Google Drive (Colab could not connect to a GPU to pack the results)
 
 ## Next plan
 Track B에선 사진을 직접 추가해볼 예정이다. 실내 사진은 제외하고 철저히 실외 사진으로 배경 중심에 사진을 선별해 넣으면 학습이 수월하지 않을까 생각한다. 물론 도시당 사진 몇십장만으로는 효과가 미미할 거라고 생각해 추가할 사진의 양도 늘리고, 도시일 확률 0.3 이하인 사진을 suspects 시트로 만들어 전부 검토한 다음, 도시를 특정하기 어려운 대상 중심의 음식 사진, 셀카 등을 스타터 사진에서 제외해볼 예정이다. 
