@@ -102,6 +102,7 @@ End the log with your plan for what to try next.
   - baseline seed 0:   seoul 0.5647, busan 0.3813, tokyo 0.6344, osaka 0.3398, taipei 0.5568
   - baseline seed 1:   seoul 0.5552, busan 0.3863, tokyo 0.6125, osaka 0.3811, taipei 0.5234
   - training time 2311.5 s (38.5 min)
+- what it means: 전체 점수는 여태 진행한 Track A 실험 중 가장 높았지만 이전에 진행한 자동차 사진 빼기와 비교했을 때, 전체가 0.16점 상승한 걸로 보아 효과는 거의 없었다고 볼 수 있다. 전체에서 0.4점 정도의 변화는 운의 차이로 간주하기 때문이다. 가장 수작업이 많고 시간이 오래 걸렸던 실험이라 기대감이 컸지만 44083장 중 고작 1672장을 제거(전체 대비 약 4%)한 거라 학습 전반에 영향을 크게 주지못한 거 같다. 그러나 과제의 목표(도시 길거리 풍경)에 맞지않는 사진을 제외한 것 자체로 의미가 있었다고 본다. 
 
 ## 2026-11-09 b_mnv3_320_bal_e8 (Track B)
 - changed: `--epochs 8` instead of 4 on top of b_mnv3_320_bal; everything else as in b_mnv3_320_bal (mobilenet_v3_large IMAGENET1K_V2 at 320, `--balance`, all 44257 starter photos, learning rate 3e-4, batch size 64), on Colab, with `--keep`
@@ -115,6 +116,7 @@ End the log with your plan for what to try next.
   - balanced:        seoul 0.5162, busan 0.4396, tokyo 0.5313, osaka 0.4295, taipei 0.6148
   - drop_not_street: seoul 0.5823, busan 0.4079, tokyo 0.6125, osaka 0.3529, taipei 0.5439
   - training time 2166.9 s (36.1 min), drop_not_street 2311.5 s (38.5 min); brought in from Google Drive (Colab could not connect to a GPU to pack the results)
+- what it means: Track B에서 나온 결과와 비슷한 모양새를 보이고있다. 상위권이였던 서울과 도쿄의 점수는 내려가고 하위권이였던 부산과 오사카의 점수는 올라갔다. 혼동 행렬을 통해서 모델이 헷갈릴 때, 사진이 더 많은 도시로 추정하게 되는 경향이 완화된 것(오사카->도쿄 착각이 37.8%에서 28.7%로)을 확인할 수 있었다. 전체는 0.64점이 올랐다. 운의 크기(0.4)와 비교했을 때 유의미한 결과지만 효과가 그리 좋았다고는 말할 수 없다. 다만 나는 이 실험을 이전의 실험보다 더 높은 점수를 받기 위해서가 아니라 도시를 고르게 잘 맞히게 하기 위해 진행했기에 원하는 결과를 얻었다고 생각한다.
 
 ## Next plan
 Track B에선 사진을 직접 추가해볼 예정이다. 실내 사진은 제외하고 철저히 실외 사진으로 배경 중심에 사진을 선별해 넣으면 학습이 수월하지 않을까 생각한다. 물론 도시당 사진 몇십장만으로는 효과가 미미할 거라고 생각해 추가할 사진의 양도 늘리고, 도시일 확률 0.3 이하인 사진을 suspects 시트로 만들어 전부 검토한 다음, 도시를 특정하기 어려운 대상 중심의 음식 사진, 셀카 등을 스타터 사진에서 제외해볼 예정이다. 
