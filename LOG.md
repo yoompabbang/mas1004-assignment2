@@ -107,5 +107,9 @@ End the log with your plan for what to try next.
 - changed: `--epochs 8` instead of 4 on top of b_mnv3_320_bal; everything else as in b_mnv3_320_bal (mobilenet_v3_large IMAGENET1K_V2 at 320, `--balance`, all 44257 starter photos, learning rate 3e-4, batch size 64), on Colab, with `--keep`
 - why: —balance로 도시별 점수를 고르게 만들었으니 이 상태에서 더 오래 학습해 같은 나라의 도시를 구별하는 능력을 향상해 전체 점수를 높이고 싶다. 마침 Track B는 학습량 제한이 없기도 하니 학습량을 2배 늘려보려고 한다.
 
+## 2026-11-10 balanced (Track A)
+- changed: on top of drop_not_street (same 42411 photos), `sample_weights` in recipe.py gives each photo 1 / the number of photos of its city, so every city is drawn equally often; nothing else changed; seed 0, on Colab
+- why: Track B에서 도시 비율을 맞춰 같은 빈도로 사진을 보여줬을 때, 점수를 고르게 만드는 효과를 볼 수 있었다. 애매하면 사진이 많은 도시로 찍는 빈도가 줄어든 것이다. 따라서 해당 효과를 Track A에서도 적용해보려 한다.
+
 ## Next plan
 Track B에선 사진을 직접 추가해볼 예정이다. 실내 사진은 제외하고 철저히 실외 사진으로 배경 중심에 사진을 선별해 넣으면 학습이 수월하지 않을까 생각한다. 물론 도시당 사진 몇십장만으로는 효과가 미미할 거라고 생각해 추가할 사진의 양도 늘리고, 도시일 확률 0.3 이하인 사진을 suspects 시트로 만들어 전부 검토한 다음, 도시를 특정하기 어려운 대상 중심의 음식 사진, 셀카 등을 스타터 사진에서 제외해볼 예정이다. 
